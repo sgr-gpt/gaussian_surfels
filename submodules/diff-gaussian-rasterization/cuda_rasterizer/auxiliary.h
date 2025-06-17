@@ -178,7 +178,8 @@ __forceinline__ __device__ bool front_facing(
 {
 	float dot = p_view.x * n_view.x + p_view.y * n_view.y + p_view.z * n_view.z;
 	// float z = n_view.z;
-	bool cond = (dot > -0.01);
+	// bool cond = (dot > -0.01);
+	bool cond = (dot > 0.0);
 
 	// float sin = dot / sqrtf(p_view.x * p_view.x + p_view.y * p_view.y + p_view.z * p_view.z);
 	// if (dot < 0 && n_view.z >= 0)

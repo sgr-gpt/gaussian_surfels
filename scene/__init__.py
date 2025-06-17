@@ -93,7 +93,6 @@ class Scene:
             self.gaussians.create_from_pcd(scene_info.point_cloud, self.cameras_extent)
         
 
-        self.gaussians.config.append(camera_lr > 0)
         self.gaussians.config = torch.tensor(self.gaussians.config, dtype=torch.float32, device="cuda")
 
 

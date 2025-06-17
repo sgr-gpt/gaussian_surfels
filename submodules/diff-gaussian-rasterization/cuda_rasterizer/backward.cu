@@ -282,7 +282,7 @@ __global__ void computeCov2DCUDA(
 	float tz2 = tz * tz;
 	float tz3 = tz2 * tz;
 
-	bool lrn_cam = config[3] > 0;
+	bool lrn_cam = 0;
 	if (lrn_cam) {
 		// grads from loss to camera EXTRINSICS in W
 		// float dL_dW[16] = {
@@ -472,7 +472,7 @@ __global__ void preprocessCUDA(
 	float m_w = 1.0f / (m_hom.w + 0.0000001f);
 	// float3 p_view = transformPoint4x3(m, view);
 
-	bool surface = config[0] > 0, lrn_cam = config[3] > 0;
+	bool surface = config[0] > 0, lrn_cam = 0;
 	// Compute loss gradient w.r.t. 3D means due to gradients of 2D means
 	// from rendering procedure
 	glm::vec3 dL_dmean;

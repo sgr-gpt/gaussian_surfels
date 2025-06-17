@@ -280,7 +280,6 @@ def camera_center(camera):
     return center
 
 def world2scrn(xyz, cams, pad):
-    utils_mod = load(name="cuda_utils", sources=["utils/ext.cpp", "utils/cuda_utils.cu"])
     device = xyz.device
     mask = [i.get_gtMask().to(device).to(torch.float32) for i in cams]
     if pad >= 0:

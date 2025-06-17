@@ -61,6 +61,7 @@ class ModelParams(ParamGroup):
         self._use_mask = 1
         self.normalize_depth = True
         self.perpix_depth = True
+        self.dual_visible = True
         self.mono_normal = True
         super().__init__(parser, "Loading Parameters", sentinel)
 

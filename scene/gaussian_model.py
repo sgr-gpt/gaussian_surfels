@@ -64,7 +64,7 @@ class GaussianModel:
         self.percent_dense = 0
         self.spatial_lr_scale = 0
         try:
-            self.config = [args.surface, args.normalize_depth, args.perpix_depth]
+            self.config = [args.surface, args.normalize_depth, args.perpix_depth, args.dual_visible]
         except AttributeError:
             self.config = [True, True, True]
         self.setup_functions()
@@ -222,7 +222,6 @@ class GaussianModel:
             {'params': [self._rotation], 'lr': training_args.rotation_lr, "name": "rotation"}
         ]
 
-        self.config[3] = training_args.camera_lr > 0
         # self.optimizer = torch.optim.SGD(l)
         self.optimizer = torch.optim.Adam(l, lr=0.0, eps=1e-15)
         self.xyz_scheduler_args = get_expon_lr_func(lr_init=training_args.position_lr_init*self.spatial_lr_scale,
@@ -504,7 +503,7 @@ class GaussianModel:
         # print(prune_scale.sum())
         
         prune_vis = (self.denom == 0).squeeze()
-        prune = prune_opac + prune_vis + prune_scale
+        prune = prune_opac + prune_scale + prune_vis
         self.prune_points(prune)
         # print(f'opac:{prune_opac.sum()}, scale:{prune_scale.sum()}, vis:{prune_vis.sum()} extend:{extent}')
         # print(f'prune: {n_ori}-->{len(self._xyz)}')

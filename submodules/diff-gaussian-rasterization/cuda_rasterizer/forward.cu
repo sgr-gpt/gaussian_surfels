@@ -262,7 +262,7 @@ __global__ void preprocessCUDA(int P, int D, int M,
 
 	glm::mat3 R = quaternion2rotmat(rotations[idx]);
 
-	bool surface = config[0] > 0, pix_depth = config[2] > 0;// apply_cutoff = config[4] > 0, update_cutoff = config[5] > 0;
+	bool surface = config[0] > 0, pix_depth = config[2] > 0, dual_visible = config[3] > 0;
 	float3 n_view;
 
 	if (surface) {
@@ -273,18 +273,12 @@ __global__ void preprocessCUDA(int P, int D, int M,
 		float3 n_view   = transformVec4x3({R[0][2], R[1][2], R[2][2]}, viewmatrix);
 		float3 ax0_view = transformVec4x3({R[0][0], R[1][0], R[2][0]}, viewmatrix);
 		float3 ax1_view = transformVec4x3({R[0][1], R[1][1], R[2][1]}, viewmatrix);
-		// printf("here\n");
-		if (!front_facing(n_view, p_view, &viewCos[idx], prefiltered)) return; // cull backfacing points
-		// printf("points left: %.8f, %.8f, %.8f\n", p_view.x, p_view.y, p_view.z);
-		normal[idx * 3 + 0] = n_view.x;
-		normal[idx * 3 + 1] = n_view.y;
-		normal[idx * 3 + 2] = n_view.z;
-		// normal[idx * 3 + 0] = wrdNormal.x;
-		// normal[idx * 3 + 1] = wrdNormal.y;
-		// normal[idx * 3 + 2] = wrdNormal.z;
-		// normal[idx * 3 + 0] = p_orig.x;
-		// normal[idx * 3 + 1] = p_orig.y;
-		// normal[idx * 3 + 2] = p_orig.z;
+		
+		bool frontfacing = front_facing(n_view, p_view, &viewCos[idx], prefiltered);
+		if (!dual_visible && !frontfacing) return;  // cull backfacing points
+		normal[idx * 3 + 0] = (dual_visible && !frontfacing) ? -n_view.x : n_view.x;
+		normal[idx * 3 + 1] = (dual_visible && !frontfacing) ? -n_view.y : n_view.y;
+		normal[idx * 3 + 2] = (dual_visible && !frontfacing) ? -n_view.z : n_view.z;
 
 		if (pix_depth) {
 			// compute local homography between two planes
